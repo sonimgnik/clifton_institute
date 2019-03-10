@@ -1,11 +1,25 @@
 ###########################BIRD SPECIES ANALYSIS###############################
 
 #------------------------------------------------------------------------------
+#Introduction
+
+cat("Welcome to the Clifton Institute's Bird analysis script.\n")
+cat("\n")
+cat("This script is a test script and is incomplete.\n")
+cat("\n")
+cat("To report issues with this code, please contact Nicholas Toscano.\n")
+cat("email: ntoscano01@gmail.com\n")
+cat("\n")
+cat("\n")
+cat("\n")
+
+#------------------------------------------------------------------------------
 #Set Environment
 
+cat("Setting Environments...\n")
 
 #name directory as a value
-wd <- "/Users/nick/Desktop"
+wd <- "/Users/nick/Desktop/Clifton_Code"
 
 #check current working directory
 getwd()
@@ -15,30 +29,176 @@ setwd(wd)
 getwd()
 list.files()
 
+Sys.sleep(1)
+
 #------------------------------------------------------------------------------
 #Load Data
 
+cat("\n")
+cat("--------------------------Load Data-----------------------------------------\n")
+cat("\n")
+
+cat("Loading data...\n")
+Sys.sleep(1)
+cat("\n")
 library("readxl")
 
 data <- read_excel("data.xlsx", sheet = 2)
+class(data)
+
+cat("Wrangling into data frame...\n")
+cat("\n")
+Sys.sleep(2)
+
+#wrangle data into dataframe
+data$Date <- as.Date(data$Date)
+data$StartTime <- format(as.POSIXct(data$StartTime,"%H:%M:%S",tz=""), format ="%H:%M:%S" )
+data$EndTime <- format(as.POSIXct(data$EndTime,"%H:%M:%S",tz=""), format ="%H:%M:%S" )
+data$Duration_Old <- format(as.POSIXct(data$Duration_Old,"%H:%M:%S",tz=""), format ="%H:%M:%S" )
 data <- as.data.frame(data)
-heed(data, 5)
+
+head(data, 5)
 str(data)
 
 #------------------------------------------------------------------------------
 #Sort and filter data
 
+cat("\n")
+cat("--------------------------Sort and Filter Data-----------------------------\n")
+cat("\n")
+
+cat("Reviewing data and assembling initial report...\n")
+cat("\n")
+Sys.sleep(2)
+
 #count species and select species of interest
 library(plyr)
-count(data, "Species")
 
-#input species of interest into filter parameters
+#find the numbe of times each species was observed
+print("Individual observations made per species in this data collection:\n")
+cat("\n")
+observations <- count(data, Species)
+observations <- as.data.frame (observations)
+print(observations)
+
+cat("\n")
+cat("\n")
+
+Sys.sleep(4)
+
+#find the count of observations per species
+require(data.table) 
+count <- data.table(data) 
+SpeciesCount <- count[ , .(Totalcount = sum(Count)), by = .(Species)]
+print(SpeciesCount)
+
+cat("\n")
+cat("\n")
+
+Sys.sleep(4)
+
+cat("Determing is data is correct. \n")
+Sys.sleep(1)
+
+x <- sum(data$Count)
+y <- sum(SpeciesCount$Totalcount)
+
+#Test if counts are equal: TRUE infers data matches and are correct
+#If TRUE proceed to analysis
+if (x == y) 
+  {print('True: Data is correct')} else {print('False: Data is incorrect')}
+
+cat("\n")
+
+Sys.sleep(1)
+
+#------------------------------------------------------------------------------
+#Store results to file
+
+cat("\n")
+cat("--------------------------Store Results to File-----------------------------\n")
+cat("\n")
+
+cat("Storing results to file.\n")
+Sys.sleep(2)
+
+# Write count to csv
+write.csv(data, file = "observations_output.csv",row.names=FALSE)
+
+# Write count to csv
+write.csv(data, file = "SpeciesCount_output.csv",row.names=FALSE)
+
+#join count to table
+library(plyr)
+dataMerge <- join(data, SpeciesCount, by = ("Species"))
+
+
+# Write data to csv
+write.csv(dataMerge, file = "data_output.csv",row.names=FALSE)
+
+cat("Your result are stored in:", wd)
+
+cat("\n")
+
+
+#------------------------------------------------------------------------------
+#Filter data for analysis
+
+cat("\n")
+cat("--------------------------Filter Data for Analysis-----------------------------")
+cat("\n")
+
+cat("Prepare data for analysis...\n")
+Sys.sleep(3)
+
+cat("\n")
+
+#manual input species of interest into filter parameters
 library(dplyr)
-n <- filter(data, Species == "Northern Pintail")
-n
 
+cat("You can use filter to manually select species of interset based on the count table.\n")
+cat("\n")
+cat("The following would be an example of filtering by Northern Pintail:\n")
+filter <- filter(dataMerge, Species == "Northern Pintail")
+cat("\n")
+print(filter)
+cat("\n")
 
+n = 23
 
+cat("\n")
+
+cat("We will proceed with auto filtering.  This will filter your data by the total number of times 
+    a species was counted.\n")
+cat("The filter is set to look for any species with an observation count greater than or equal 
+    to", n, "times.\n")
+
+#filter by freq
+dataFilter <- filter(dataMerge, Totalcount >= n)
+
+dataFilter[order(-dataFilter$Totalcount),]
+
+cat("\n")
+
+#spit species to see individual results
+cat("Splitting filter results into individual species results...\n")
+cat("\n")
+Sys.sleep(2)
+
+print(split(dataFilter, dataFilter$Totalcount))
+
+for(i in unique(dataFilter$Species)) {
+  nam <- paste("data", i, sep = ".")
+  assign(nam, dataFilter[dataFilter$Species==i,])
+}
+
+cat("\n")
+
+cat("Data preparation is done.\n")
+
+cat("\n")
+
+cat("###################END OF SCRIPT######################")
 
 
 #------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ cat("\n")
 cat("Setting Environments...\n")
 
 #name directory as a value
-wd <- "/Users/nick/Desktop/Clifton_Code"
+wd <- "workingdirectory"
 
 #check current working directory
 getwd()

@@ -3,12 +3,12 @@
 #------------------------------------------------------------------------------
 #Introduction
 
-cat("Welcome to the Clifton Institute's Bird analysis script.\n")
+cat("Welcome to the Bird analysis script.\n")
 cat("\n")
 cat("This script is a test script and is incomplete.\n")
 cat("\n")
-cat("To report issues with this code, please contact Nicholas Toscano.\n")
-cat("email: ntoscano01@gmail.com\n")
+cat("To report issues with this code, please contact .\n")
+cat("email: \n")
 cat("\n")
 cat("\n")
 cat("\n")

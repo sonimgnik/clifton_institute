@@ -1,0 +1,57 @@
+###########################BIRD SPECIES ANALYSIS###############################
+
+#------------------------------------------------------------------------------
+#Set Environment
+
+
+#name directory as a value
+wd <- "/Users/nick/Desktop"
+
+#check current working directory
+getwd()
+
+#set working diectory and view contents
+setwd(wd)
+getwd()
+list.files()
+
+#------------------------------------------------------------------------------
+#Load Data
+
+library("readxl")
+
+data <- read_excel("data.xlsx", sheet = 2)
+data <- as.data.frame(data)
+heed(data, 5)
+str(data)
+
+#------------------------------------------------------------------------------
+#Sort and filter data
+
+#count species and select species of interest
+library(plyr)
+count(data, "Species")
+
+#input species of interest into filter parameters
+library(dplyr)
+n <- filter(data, Species == "Northern Pintail")
+n
+
+
+
+
+
+#------------------------------------------------------------------------------
+#Summarize
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+#Plot data
+
+
